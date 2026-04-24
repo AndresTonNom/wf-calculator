@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Fighters Calculator</title>
+<style>
+  :root {
+    --accent-orange: #ff6600;
+    --bg-black: #0c0c0c;
+    --input-bg: #111111;
+    --text-gray: #888;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: #000;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .calculator-card {
+    width: 850px;
+    background: var(--bg-black);
+    border: 1px solid var(--accent-orange);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.2);
+  }
+
+  h1 {
+    color: #ffcc00;
+    font-size: 22px;
+    margin: 0 0 15px 0;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  hr { border: 0; border-top: 1px solid #222; margin-bottom: 25px; }
+
+  /* Quitar flechas de los números */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  label { font-size: 11px; font-weight: bold; color: #efefef; text-transform: uppercase; }
+
+  .row { display: flex; gap: 10px; }
+
+  input, select {
+    background: var(--input-bg);
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    color: var(--text-gray);
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+  }
+
+  input:focus { border-color: var(--accent-orange); color: white; }
+
+  .results-horizontal {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .res-card {
+    flex: 1;
+    background: #080808;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 15px 10px;
+    text-align: center;
+  }
+
+  .res-label {
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+    letter-spacing: 1px;
+  }
+
+  .res-value { font-size: 19px; font-weight: bold; }
+  .yellow { color: #ffcc00; }
+  .orange { color: #ff4400; }
+  .purple { color: #a349a4; }
+
+  .projection-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .projection-inputs { 
+    display: flex; 
+    gap: 10px; 
+    margin: 15px auto; 
+    max-width: 400px;
+  }
+
+  .projection-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  .gain-label { font-size: 10px; color: #888; text-transform: uppercase; }
+  .gain-value { font-size: 20px; font-weight: bold; color: #44ff44; margin-top: 5px; }
+  .total-value { font-size: 20px; font-weight: bold; color: #00ccff; margin-top: 5px; }
+
+  .suffix-box { width: 90px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="calculator-card">
+  <h1>Awakening Calculator</h1>
+  <hr>
+
+  <div class="input-grid">
+    <div class="field">
+      <label>Target Awakening</label>
+      <select id="targetRank"></select>
+
+      <label>Current Power</label>
+      <div class="row">
+        <input type="number" id="curPower" placeholder="e.g., 5000">
+        <select id="curSuf" class="suffix-box"></select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Power per Click</label>
+      <div class="row">
+        <input type="number" id="cliPower" placeholder="e.g., 150">
+        <select id="cliSuf" class="suffix-box"></select>
+      </div>
+
+      <label>Click Cooldown</label>
+      <input type="number" id="cooldown" step="0.01" placeholder="e.g., 0.15">
+    </div>
+  </div>
+
+  <div class="results-horizontal">
+    <div class="res-card">
+      <span class="res-label">POWER NEEDED</span>
+      <div id="outNeed" class="res-value yellow">---</div>
+    </div>
+    <div class="res-card">
+      <span class="res-label">NEW MULTIPLIER</span>
+      <div id="outMult" class="res-value purple">---</div>
+    </div>
+    <div class="res-card">
+      <span class="res-label">TIME TO RANK UP</span>
+      <div id="outTime" class="res-value orange">---</div>
+    </div>
+  </div>
+
+  <div class="projection-card">
+    <label style="color: var(--accent-orange); font-size: 12px; letter-spacing: 2px;">Power Projection (No Awakening)</label>
+    <div class="projection-inputs">
+      <input type="number" id="projTime" placeholder="Quantity" value="60">
+      <select id="projUnit">
+        <option value="60">Minutes</option>
+        <option value="3600">Hours</option>
+      </select>
+    </div>
+    
+    <div class="projection-results">
+      <div>
+        <span class="gain-label">Power to Earn:</span>
+        <div id="projectedGain" class="gain-value">+0</div>
+      </div>
+      <div>
+        <span class="gain-label">Total Power After Time:</span>
+        <div id="projectedTotal" class="total-value">0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // LISTA DE SUFIJOS HASTA NONILLION (No)
+  const SUFFIXES = ["", "K", "M", "B", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No"];
+  
+  const AWAKENINGS = [
+    { name: "Awakening 1",  req: 0,       mult: "1" },
+    { name: "Awakening 2",  req: 5e3,     mult: "1.5" },
+    { name: "Awakening 3",  req: 45e3,    mult: "2" },
+    { name: "Awakening 4",  req: 250e3,   mult: "4" },
+    { name: "Awakening 5",  req: 1e6,     mult: "8" },
+    { name: "Awakening 6",  req: 5.5e6,   mult: "16" },
+    { name: "Awakening 7",  req: 27.5e6,  mult: "32" },
+    { name: "Awakening 8",  req: 105e6,   mult: "64" },
+    { name: "Awakening 9",  req: 750e6,   mult: "128" },
+    { name: "Awakening 10", req: 3.5e9,   mult: "256" },
+    { name: "Awakening 11", req: 25e9,    mult: "512" },
+    { name: "Awakening 12", req: 85e9,    mult: "1024" },
+    { name: "Awakening 13", req: 350e9,   mult: "2048" },
+    { name: "Awakening 14", req: 750e9,   mult: "4096" },
+    { name: "Awakening 15", req: 3e12,    mult: "8192" },
+    { name: "Awakening 16", req: 25e12,   mult: "16384" },
+    { name: "Awakening 17", req: 210e12,  mult: "32,768" },
+    { name: "Awakening 18", req: 1.5e15,  mult: "65,536" },
+    { name: "Awakening 19", req: 12.5e15, mult: "131,072" },
+    { name: "Awakening 20", req: 105e15,  mult: "262,144" },
+    { name: "Awakening 21", req: 925e15,  mult: "524,288" },
+    { name: "Awakening 22", req: 35e18,   mult: "1.04M" },
+    { name: "Awakening 23", req: 2.5e21,  mult: "2.09M" },
+    { name: "Awakening 24", req: 225e21,  mult: "4.19M" },
+    { name: "Awakening 25", req: 21e24,   mult: "8.38M" }
+  ];
+
+  const ids = ['targetRank', 'curPower', 'curSuf', 'cliPower', 'cliSuf', 'cooldown', 'projTime', 'projUnit'];
+  const rSel = document.getElementById('targetRank');
+  AWAKENINGS.forEach((aw, i) => i > 0 && rSel.add(new Option(aw.name, i)));
+
+  [document.getElementById('curSuf'), document.getElementById('cliSuf')].forEach(s => {
+    SUFFIXES.forEach(sf => s.add(new Option(sf || "none", sf)));
+  });
+
+  function format(n) {
+    if (n === 0) return "0";
+    const absN = Math.abs(n);
+    if (absN < 1000) return Math.floor(n).toString();
+    const i = Math.floor(Math.log10(absN) / 3);
+    const suf = SUFFIXES[i] !== undefined ? SUFFIXES[i] : "MAX+";
+    return (n / Math.pow(10, i * 3)).toFixed(2) + suf;
+  }
+
+  function calculate() {
+    const idx = rSel.value;
+    const curVal = parseFloat(document.getElementById('curPower').value) || 0;
+    const curSuf = document.getElementById('curSuf').value;
+    const cur = curVal * Math.pow(10, SUFFIXES.indexOf(curSuf) * 3);
+
+    const cliVal = parseFloat(document.getElementById('cliPower').value) || 0;
+    const cliSuf = document.getElementById('cliSuf').value;
+    const cli = cliVal * Math.pow(10, SUFFIXES.indexOf(cliSuf) * 3);
+    const cd = parseFloat(document.getElementById('cooldown').value) || 0;
+
+    ids.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+
+    // Power Projection
+    const pTime = parseFloat(document.getElementById('projTime').value) || 0;
+    const pUnit = parseFloat(document.getElementById('projUnit').value);
+    
+    if (cli > 0 && cd > 0 && pTime > 0) {
+      const powerEarning = (pTime * pUnit / cd) * cli;
+      const totalPower = cur + powerEarning;
+      document.getElementById('projectedGain').textContent = "+" + format(powerEarning);
+      document.getElementById('projectedTotal').textContent = format(totalPower);
+    } else {
+      document.getElementById('projectedGain').textContent = "+0";
+      document.getElementById('projectedTotal').textContent = format(cur);
+    }
+
+    if(!idx) return;
+    const data = AWAKENINGS[idx];
+    document.getElementById('outNeed').textContent = format(data.req);
+    document.getElementById('outMult').textContent = "x" + data.mult;
+
+    const tTxt = document.getElementById('outTime');
+    if (cur >= data.req) tTxt.textContent = "READY!";
+    else if (cli <= 0 || cd <= 0) tTxt.textContent = "Wait...";
+    else {
+      let sec = Math.ceil((data.req - cur) / cli) * cd;
+      let d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
+      tTxt.textContent = d > 0 ? `${d}d ${h}h ${m}m` : (h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`);
+    }
+  }
+
+  window.onload = () => {
+    ids.forEach(id => {
+      const saved = localStorage.getItem(id);
+      if (saved !== null) document.getElementById(id).value = saved;
+    });
+    calculate();
+  };
+
+  document.addEventListener('input', calculate);
+</script>
+
+</body>
+</html>
