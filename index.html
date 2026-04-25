@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Fighters Calculator</title>
+<title>World Fighters Calculator - Awakening Update</title>
 <style>
   :root {
     --accent-orange: #ff6600;
@@ -43,7 +43,6 @@
 
   hr { border: 0; border-top: 1px solid #222; margin-bottom: 25px; }
 
-  /* Quitar flechas de los números */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; }
@@ -201,35 +200,40 @@
 </div>
 
 <script>
-  // LISTA DE SUFIJOS HASTA NONILLION (No)
-  const SUFFIXES = ["", "K", "M", "B", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No"];
+  // SUFIJOS ACTUALIZADOS (Hasta Dc para cubrir Awakening 29 y superiores)
+  const SUFFIXES = ["", "K", "M", "B", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No", "Dc"];
   
   const AWAKENINGS = [
-    { name: "Awakening 1",  req: 0,       mult: "1" },
-    { name: "Awakening 2",  req: 5e3,     mult: "1.5" },
-    { name: "Awakening 3",  req: 45e3,    mult: "2" },
-    { name: "Awakening 4",  req: 250e3,   mult: "4" },
-    { name: "Awakening 5",  req: 1e6,     mult: "8" },
-    { name: "Awakening 6",  req: 5.5e6,   mult: "16" },
-    { name: "Awakening 7",  req: 27.5e6,  mult: "32" },
-    { name: "Awakening 8",  req: 105e6,   mult: "64" },
-    { name: "Awakening 9",  req: 750e6,   mult: "128" },
-    { name: "Awakening 10", req: 3.5e9,   mult: "256" },
-    { name: "Awakening 11", req: 25e9,    mult: "512" },
-    { name: "Awakening 12", req: 85e9,    mult: "1024" },
-    { name: "Awakening 13", req: 350e9,   mult: "2048" },
-    { name: "Awakening 14", req: 750e9,   mult: "4096" },
-    { name: "Awakening 15", req: 3e12,    mult: "8192" },
-    { name: "Awakening 16", req: 25e12,   mult: "16384" },
-    { name: "Awakening 17", req: 210e12,  mult: "32,768" },
-    { name: "Awakening 18", req: 1.5e15,  mult: "65,536" },
-    { name: "Awakening 19", req: 12.5e15, mult: "131,072" },
-    { name: "Awakening 20", req: 105e15,  mult: "262,144" },
-    { name: "Awakening 21", req: 925e15,  mult: "524,288" },
-    { name: "Awakening 22", req: 35e18,   mult: "1.04M" },
-    { name: "Awakening 23", req: 2.5e21,  mult: "2.09M" },
-    { name: "Awakening 24", req: 225e21,  mult: "4.19M" },
-    { name: "Awakening 25", req: 21e24,   mult: "8.38M" }
+    { name: "Awakening 1",  req: 0,        mult: "1" },
+    { name: "Awakening 2",  req: 5e3,      mult: "1.5" },
+    { name: "Awakening 3",  req: 45e3,     mult: "2" },
+    { name: "Awakening 4",  req: 250e3,    mult: "4" },
+    { name: "Awakening 5",  req: 1e6,      mult: "8" },
+    { name: "Awakening 6",  req: 5.5e6,    mult: "16" },
+    { name: "Awakening 7",  req: 27.5e6,   mult: "32" },
+    { name: "Awakening 8",  req: 105e6,    mult: "64" },
+    { name: "Awakening 9",  req: 750e6,    mult: "128" },
+    { name: "Awakening 10", req: 3.5e9,    mult: "256" },
+    { name: "Awakening 11", req: 25e9,     mult: "512" },
+    { name: "Awakening 12", req: 85e9,     mult: "1024" },
+    { name: "Awakening 13", req: 350e9,    mult: "2048" },
+    { name: "Awakening 14", req: 750e9,    mult: "4096" },
+    { name: "Awakening 15", req: 3e12,     mult: "8192" },
+    { name: "Awakening 16", req: 25e12,    mult: "16384" },
+    { name: "Awakening 17", req: 210e12,   mult: "32,768" },
+    { name: "Awakening 18", req: 1.5e15,   mult: "65,536" },
+    { name: "Awakening 19", req: 12.5e15,  mult: "131,072" },
+    { name: "Awakening 20", req: 105e15,   mult: "262,144" },
+    { name: "Awakening 21", req: 925e15,   mult: "524,288" },
+    { name: "Awakening 22", req: 35e18,    mult: "1.04M" },
+    { name: "Awakening 23", req: 2.5e21,   mult: "2.09M" },
+    { name: "Awakening 24", req: 225e21,   mult: "4.19M" },
+    { name: "Awakening 25", req: 21e24,    mult: "8.38M" },
+    // NUEVOS AJUSTES SOLICITADOS
+    { name: "Awakening 26", req: 265e24,   mult: "16.8M" },
+    { name: "Awakening 27", req: 3.99e27,  mult: "33.6M" },
+    { name: "Awakening 28", req: 105e27,   mult: "67.2M" },
+    { name: "Awakening 29", req: 2.85e30,  mult: "134.4M" }
   ];
 
   const ids = ['targetRank', 'curPower', 'curSuf', 'cliPower', 'cliSuf', 'cooldown', 'projTime', 'projUnit'];
@@ -245,7 +249,7 @@
     const absN = Math.abs(n);
     if (absN < 1000) return Math.floor(n).toString();
     const i = Math.floor(Math.log10(absN) / 3);
-    const suf = SUFFIXES[i] !== undefined ? SUFFIXES[i] : "MAX+";
+    const suf = SUFFIXES[i] !== undefined ? SUFFIXES[i] : "e" + (i * 3);
     return (n / Math.pow(10, i * 3)).toFixed(2) + suf;
   }
 
@@ -262,7 +266,7 @@
 
     ids.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
 
-    // Power Projection
+    // Proyección de Poder
     const pTime = parseFloat(document.getElementById('projTime').value) || 0;
     const pUnit = parseFloat(document.getElementById('projUnit').value);
     
