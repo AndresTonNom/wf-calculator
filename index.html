@@ -200,8 +200,8 @@
 </div>
 
 <script>
-  // SUFIJOS ACTUALIZADOS (Hasta Dc para cubrir Awakening 29 y superiores)
-  const SUFFIXES = ["", "K", "M", "B", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No", "Dc"];
+  // SUFIJOS ACTUALIZADOS (Se cambió Dc por De)
+  const SUFFIXES = ["", "K", "M", "B", "T", "Qd", "Qn", "Sx", "Sp", "Oc", "No", "De"];
   
   const AWAKENINGS = [
     { name: "Awakening 1",  req: 0,        mult: "1" },
@@ -229,7 +229,6 @@
     { name: "Awakening 23", req: 2.5e21,   mult: "2.09M" },
     { name: "Awakening 24", req: 225e21,   mult: "4.19M" },
     { name: "Awakening 25", req: 21e24,    mult: "8.38M" },
-    // NUEVOS AJUSTES SOLICITADOS
     { name: "Awakening 26", req: 265e24,   mult: "16.8M" },
     { name: "Awakening 27", req: 3.99e27,  mult: "33.6M" },
     { name: "Awakening 28", req: 105e27,   mult: "67.2M" },
@@ -266,7 +265,7 @@
 
     ids.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
 
-    // Proyección de Poder
+    // Power Projection
     const pTime = parseFloat(document.getElementById('projTime').value) || 0;
     const pUnit = parseFloat(document.getElementById('projUnit').value);
     
